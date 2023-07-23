@@ -1,3 +1,4 @@
+import { increaseFreePromptsCount, isFreeTierPromptLimitReached } from "@/lib/api-limit";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { Configuration, OpenAIApi } from "openai";
@@ -20,6 +21,12 @@ export async function POST(req: Request) {
     if (!quantity) return new NextResponse("Quantity is requried", { status: 400 });
     if (!resolution) return new NextResponse("Resolution are requried", { status: 400 });
 
+    const isFreeTierExpired = await isFreeTierPromptLimitReached(userId);
+
+    if (isFreeTierExpired) {
+      return new NextResponse("Free trial has expired.", { status: 403 });
+    }
+
     const {
       data: { data },
     } = await openai.createImage({
@@ -27,6 +34,8 @@ export async function POST(req: Request) {
       n: parseInt(quantity, 10),
       size: resolution,
     });
+
+    await increaseFreePromptsCount();
 
     return NextResponse.json(data);
   } catch (error) {

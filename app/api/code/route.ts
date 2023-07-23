@@ -1,3 +1,4 @@
+import { increaseFreePromptsCount, isFreeTierPromptLimitReached } from "@/lib/api-limit";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
@@ -24,10 +25,18 @@ export async function POST(req: Request) {
     if (!configuration.apiKey) return new NextResponse("OpenAi API-Key not configured", { status: 500 });
     if (!messages) return new NextResponse("Messages are requried", { status: 400 });
 
+    const isFreeTierExpired = await isFreeTierPromptLimitReached(userId);
+
+    if (isFreeTierExpired) {
+      return new NextResponse("Free trial has expired.", { status: 403 });
+    }
+
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [instructionMessage, ...messages],
     });
+
+    await increaseFreePromptsCount();
 
     return NextResponse.json(response.data.choices[0].message);
   } catch (error) {

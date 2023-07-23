@@ -30,7 +30,6 @@ const routes = [
     href: "/video",
     color: "text-orange-700",
     bgColor: "bg-orange-700/10",
-
     isTool: true,
   },
   {
