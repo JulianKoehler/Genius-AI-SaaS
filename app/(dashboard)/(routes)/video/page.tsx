@@ -15,11 +15,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/empty";
 import LoadingComponent from "@/components/loading-component";
+import { useProModal } from "@/hooks/useProModal";
 
 type Props = {};
 
 const VideoPage = (props: Props) => {
   const [video, setVideo] = useState<string>();
+  const proModal = useProModal();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -40,7 +42,7 @@ const VideoPage = (props: Props) => {
 
       form.reset();
     } catch (error: any) {
-      // TODO: Open Pro Modal
+      if (error?.response?.status === 403) proModal.onOpen();
       console.log(error);
     } finally {
       router.refresh();

@@ -6,17 +6,21 @@ import { MAX_FREE_PROMPTS } from "@/constants";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
+import { useProModal } from "@/hooks/useProModal";
 
 type Props = {
   apiLimitCount: number;
 };
 
 const FreeTierCounter = ({ apiLimitCount = 0 }: Props) => {
+  const proModal = useProModal();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  if (!isClient) return null;
 
   return (
     <div className="px-3">
@@ -32,6 +36,7 @@ const FreeTierCounter = ({ apiLimitCount = 0 }: Props) => {
             />
           </div>
           <Button
+            onClick={proModal.onOpen}
             variant="upgrade"
             className="w-full">
             Upgrade <Zap className="w-4 h-4 fill-white ml-1" />

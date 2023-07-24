@@ -19,11 +19,13 @@ import LoadingComponent from "@/components/loading-component";
 import { avatarMap } from "@/components/avatars";
 
 import { cn } from "@/lib/utils";
+import { useProModal } from "@/hooks/useProModal";
 
 type Props = {};
 
 const ConversationPage = (props: Props) => {
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const proModal = useProModal();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -51,7 +53,7 @@ const ConversationPage = (props: Props) => {
 
       form.reset();
     } catch (error: any) {
-      // TODO: Open Pro Modal
+      if (error?.response?.status === 403) proModal.onOpen();
       console.log(error);
     } finally {
       router.refresh(); // Rehydrate the server components to fetch the most recent data from prisma

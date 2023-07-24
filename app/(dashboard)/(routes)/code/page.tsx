@@ -20,11 +20,13 @@ import { avatarMap } from "@/components/avatars";
 
 import { cn } from "@/lib/utils";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import { useProModal } from "@/hooks/useProModal";
 
 type Props = {};
 
 const CodePage = (props: Props) => {
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const proModal = useProModal();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -52,7 +54,7 @@ const CodePage = (props: Props) => {
 
       form.reset();
     } catch (error: any) {
-      // TODO: Open Pro Modal
+      if (error?.response?.status === 403) proModal.onOpen();
       console.log(error);
     } finally {
       router.refresh();
