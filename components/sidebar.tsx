@@ -8,14 +8,16 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import routes from "@/lib/routes";
 import FreeTierCounter from "@/components/free-tier-counter";
+import { hasValidSubscription } from "@/lib/subscription";
 
 const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
 
 type Props = {
   apiLimitCount: number;
+  isPro: boolean;
 };
 
-const Sidebar = ({ apiLimitCount }: Props) => {
+const Sidebar = async ({ apiLimitCount, isPro = false }: Props) => {
   const pathname = usePathname();
 
   return (
@@ -50,7 +52,10 @@ const Sidebar = ({ apiLimitCount }: Props) => {
           ))}
         </div>
       </div>
-      <FreeTierCounter apiLimitCount={apiLimitCount} />
+      <FreeTierCounter
+        apiLimitCount={apiLimitCount}
+        isPro={isPro}
+      />
     </div>
   );
 };

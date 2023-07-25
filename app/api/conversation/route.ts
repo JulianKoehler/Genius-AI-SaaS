@@ -1,4 +1,5 @@
 import { isFreeTierPromptLimitReached, increaseFreePromptsCount } from "@/lib/api-limit";
+import { hasValidSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { Configuration, OpenAIApi } from "openai";
@@ -20,8 +21,9 @@ export async function POST(req: Request) {
     if (!messages) return new NextResponse("Messages are requried", { status: 400 });
 
     const isFreeTierExpired = await isFreeTierPromptLimitReached(userId);
+    const isPro = await hasValidSubscription();
 
-    if (isFreeTierExpired) {
+    if (isFreeTierExpired && !isPro) {
       return new NextResponse("Free trial has expired.", { status: 403 });
     }
 
@@ -30,7 +32,7 @@ export async function POST(req: Request) {
       messages,
     });
 
-    await increaseFreePromptsCount();
+    if (!isPro) await increaseFreePromptsCount();
 
     return NextResponse.json(response.data.choices[0].message);
   } catch (error) {

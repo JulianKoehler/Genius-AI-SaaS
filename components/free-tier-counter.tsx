@@ -10,9 +10,10 @@ import { useProModal } from "@/hooks/useProModal";
 
 type Props = {
   apiLimitCount: number;
+  isPro: boolean;
 };
 
-const FreeTierCounter = ({ apiLimitCount = 0 }: Props) => {
+const FreeTierCounter = ({ apiLimitCount = 0, isPro = false }: Props) => {
   const proModal = useProModal();
   const [isClient, setIsClient] = useState(false);
 
@@ -20,7 +21,7 @@ const FreeTierCounter = ({ apiLimitCount = 0 }: Props) => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null;
+  if (!isClient || isPro) return null;
 
   return (
     <div className="px-3">

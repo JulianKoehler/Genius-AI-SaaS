@@ -8,9 +8,10 @@ import { useEffect, useState } from "react";
 
 type Props = {
   apiLimitCount: number;
+  isPro: boolean;
 };
 
-const MobileSidebar = ({ apiLimitCount }: Props) => {
+const MobileSidebar = ({ apiLimitCount, isPro = false }: Props) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -31,7 +32,10 @@ const MobileSidebar = ({ apiLimitCount }: Props) => {
       <SheetContent
         side="left"
         className="p-0">
-        <Sidebar apiLimitCount={apiLimitCount} />
+        <Sidebar
+          apiLimitCount={apiLimitCount}
+          isPro={isPro}
+        />
       </SheetContent>
     </Sheet>
   );

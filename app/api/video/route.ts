@@ -1,4 +1,5 @@
 import { increaseFreePromptsCount, isFreeTierPromptLimitReached } from "@/lib/api-limit";
+import { hasValidSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
@@ -17,8 +18,9 @@ export async function POST(req: Request) {
     if (!prompt) return new NextResponse("Prompt are requried", { status: 400 });
 
     const isFreeTierExpired = await isFreeTierPromptLimitReached(userId);
+    const isPro = await hasValidSubscription();
 
-    if (isFreeTierExpired) {
+    if (isFreeTierExpired && !isPro) {
       return new NextResponse("Free trial has expired.", { status: 403 });
     }
 
@@ -31,7 +33,7 @@ export async function POST(req: Request) {
       }
     );
 
-    await increaseFreePromptsCount();
+    if (!isPro) await increaseFreePromptsCount();
 
     return NextResponse.json(response);
   } catch (error) {
