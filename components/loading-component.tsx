@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
-import { ThreeDots } from "react-loader-spinner";
 
 type Props = {
   imagePage?: boolean;
