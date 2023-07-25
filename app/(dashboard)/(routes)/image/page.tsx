@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
 import { useProModal } from "@/hooks/useProModal";
+import toast from "react-hot-toast";
 
 type Props = {};
 
@@ -47,7 +48,11 @@ const ImagePage = (props: Props) => {
       setImages(urls);
       form.reset();
     } catch (error: any) {
-      if (error?.response?.status === 403) proModal.onOpen();
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        toast.error("Sorry, something went wrong!");
+      }
       console.log(error);
     } finally {
       router.refresh();

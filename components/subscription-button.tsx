@@ -3,6 +3,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { Zap } from "lucide-react";
+import { BeatLoader } from "react-spinners";
+import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
 
@@ -20,6 +22,7 @@ const SubscriptionButton = ({ isPro = false }: Props) => {
       window.location.href = data.url;
     } catch (error) {
       console.log("[BILLING_ERROR]", error);
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -28,9 +31,16 @@ const SubscriptionButton = ({ isPro = false }: Props) => {
     <Button
       disabled={isLoading}
       onClick={onManageSubscription}
+      className="min-w-[8rem]"
       variant={isPro ? "default" : "upgrade"}>
-      {isPro ? "Manage Subscription" : "Upgrade"}
-      {!isPro && <Zap className="w-4 h-4 ml-2 fill-white" />}
+      {isLoading ? "" : isPro ? "Manage Subscription" : "Upgrade"}
+      {!isPro && !isLoading && <Zap className="w-4 h-4 ml-2 fill-white" />}
+      {isLoading && (
+        <BeatLoader
+          size={6}
+          color="white"
+        />
+      )}
     </Button>
   );
 };

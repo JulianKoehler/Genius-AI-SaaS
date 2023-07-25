@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChatCompletionRequestMessage } from "openai";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 import Heading from "@/components/heading";
 import { formSchema } from "./constants";
@@ -37,7 +38,6 @@ const ConversationPage = (props: Props) => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     try {
       const userMessage: ChatCompletionRequestMessage = {
         role: "user",
@@ -53,7 +53,11 @@ const ConversationPage = (props: Props) => {
 
       form.reset();
     } catch (error: any) {
-      if (error?.response?.status === 403) proModal.onOpen();
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        toast.error("Sorry, something went wrong!");
+      }
       console.log(error);
     } finally {
       router.refresh(); // Rehydrate the server components to fetch the most recent data from prisma

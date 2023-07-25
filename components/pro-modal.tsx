@@ -3,6 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Check, Zap } from "lucide-react";
+import toast from "react-hot-toast";
 
 import {
   Dialog,
@@ -18,6 +19,7 @@ import routes from "@/lib/routes";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { BeatLoader } from "react-spinners";
 
 type Props = {};
 
@@ -33,6 +35,7 @@ const ProModal = (props: Props) => {
       window.location.href = data.url;
     } catch (error: any) {
       console.log("[STRIPE_CLIENT_ERROR]", error);
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -74,11 +77,21 @@ const ProModal = (props: Props) => {
         </DialogHeader>
         <DialogFooter>
           <Button
+            disabled={isLoading}
             onClick={onSubscribe}
             size="lg"
             variant="upgrade"
             className="w-full">
-            Upgrade <Zap className="w-4 h-4 ml-2 fill-white" />
+            {isLoading ? (
+              <BeatLoader
+                size={8}
+                color="white"
+              />
+            ) : (
+              <>
+                <span>Upgrade</span> <Zap className="w-4 h-4 ml-2 fill-white" />
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
