@@ -17,7 +17,7 @@ type Props = {
   isPro: boolean;
 };
 
-const Sidebar = async ({ apiLimitCount, isPro = false }: Props) => {
+const Sidebar = ({ apiLimitCount, isPro = false }: Props) => {
   const pathname = usePathname();
 
   return (
